@@ -23,7 +23,7 @@
  *  @author Robert Sedgewick
  *  @author Kevin Wayne
  *  @author Zach Blick
- *  @author YOUR NAME HERE
+ *  @author Jacob Lowe
  */
 public class BitmapCompressor {
 
@@ -33,7 +33,38 @@ public class BitmapCompressor {
      */
     public static void compress() {
 
-        // TODO: complete compress()
+        // Start with 0 as the initial bit
+        boolean b = false;
+        int count = 0;
+
+        // Go through the bitmap
+        while (!BinaryStdIn.isEmpty()) {
+            boolean bit = BinaryStdIn.readBoolean();
+
+            // Check if the current bit is the same as the current digit's bit
+            if (bit == b) {
+
+                // Extend the current digit and use the remainder if the maximum length is reached
+                if (count == 31) {
+                    BinaryStdOut.write(count, 5);
+
+                    // Start the opposite bit with length 0
+                    count = 0;
+                    BinaryStdOut.write(count, 5);
+                }
+                count++;
+            }
+
+            // Different bit; write out the current digit and start a new current digit
+            else {
+
+                // Write current digit and switch bits
+                BinaryStdOut.write(count, 5);
+                b = !b;
+                count = 1;
+            }
+        }
+        BinaryStdOut.write(count, 5);
 
         BinaryStdOut.close();
     }
@@ -44,8 +75,21 @@ public class BitmapCompressor {
      */
     public static void expand() {
 
-        // TODO: complete expand()
+        // Start with 0 as the initial bit
+        boolean b = false;
 
+        // Keep going until no more encoded parts to read
+        while (!BinaryStdIn.isEmpty()) {
+
+            // Read one sequence as a 5 bit integer
+            int sequence = BinaryStdIn.readInt(5);
+            for (int i = 0; i < sequence; i++) {
+                BinaryStdOut.write(b);
+            }
+
+            // Switch the bit
+            b = !b;
+        }
         BinaryStdOut.close();
     }
 
